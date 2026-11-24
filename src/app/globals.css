@@ -1,0 +1,236 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #F2F2F7;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", sans-serif;
+    color: #1C1C1E;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    overscroll-behavior: none;
+  }
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 16px);
+  }
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+details summary::-webkit-details-marker {
+  display: none;
+}
+
+.ios-blur {
+  backdrop-filter: blur(20px) saturate(190%);
+  -webkit-backdrop-filter: blur(20px) saturate(190%);
+}
+
+.ios-card {
+  background: #FFFFFF;
+  border-radius: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.02);
+  border: 0.5px solid rgba(0, 0, 0, 0.06);
+}
+
+.ios-inset-item:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 56px;
+  height: 0.5px;
+  background-color: rgba(60, 60, 67, 0.12);
+}
+
+.font-editorial {
+  font-family: "DM Serif Display", Georgia, Cambria, "Times New Roman", serif;
+}
+
+.font-malayalam {
+  font-family: "Noto Sans Malayalam", "Inter", sans-serif;
+}
+
+/* Keynote-Style Slide Motion & Staggered Reveals */
+@keyframes slideEnterNext {
+  from {
+    opacity: 0;
+    transform: translate3d(18px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes slideEnterPrev {
+  from {
+    opacity: 0;
+    transform: translate3d(-18px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes slideEnterJump {
+  from {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideRevealUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes hubBreathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.45;
+  }
+  50% {
+    transform: scale(1.035);
+    opacity: 0.85;
+  }
+}
+
+@keyframes svgFlowPulse {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+
+.slide-enter-next {
+  animation: slideEnterNext 230ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.slide-enter-prev {
+  animation: slideEnterPrev 230ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.slide-enter-jump {
+  animation: slideEnterJump 210ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.reveal-item {
+  animation: slideRevealUp 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--stagger, 0) * 55ms);
+}
+
+.hub-breathe {
+  animation: hubBreathe 4.2s ease-in-out infinite;
+}
+
+.svg-flow-active {
+  stroke-dasharray: 7 5;
+  animation: svgFlowPulse 1.4s linear infinite;
+}
+
+.static-render-mode *,
+.print-deck-root * {
+  animation: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide-enter-next,
+  .slide-enter-prev,
+  .slide-enter-jump,
+  .reveal-item,
+  .hub-breathe,
+  .svg-flow-active {
+    animation: none !important;
+  }
+}
+
+/* Presentation Print / Save-as-PDF 16:9 Widescreen Engine */
+.print-deck-root {
+  display: none;
+}
+
+@media print {
+  @page {
+    size: 16in 9in;
+    margin: 0;
+  }
+
+  html,
+  body {
+    width: 16in !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background-color: #FAF8F5 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    overflow: visible !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-deck-root {
+    display: block !important;
+    width: 16in !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .print-slide-sheet {
+    width: 16in !important;
+    height: 9in !important;
+    overflow: hidden !important;
+    position: relative !important;
+    break-after: page !important;
+    page-break-after: always !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    background-color: #FAF8F5 !important;
+  }
+
+  .print-slide-sheet:last-child {
+    break-after: auto !important;
+    page-break-after: auto !important;
+  }
+
+  .print-slide-canvas {
+    width: 1920px !important;
+    height: 1080px !important;
+    transform: scale(0.8) !important;
+    transform-origin: top left !important;
+  }
+}

@@ -68,6 +68,7 @@ export function SlideStage() {
 
   const rootRef = useRef<HTMLDivElement | null>(null);
   const viewportRef = useRef<HTMLDivElement | null>(null);
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
 
   const goNext = useCallback(() => {
     setTransitionMode("next");
@@ -122,10 +123,11 @@ export function SlideStage() {
 
     const updateScale = () => {
       const rect = el.getBoundingClientRect();
-      const padX = isFullscreen ? 16 : 40;
-      const padY = isFullscreen ? 16 : 32;
-      const availW = Math.max(320, rect.width - padX);
-      const availH = Math.max(180, rect.height - padY);
+      const isSmall = window.innerWidth < 640;
+      const padX = isFullscreen ? 16 : isSmall ? 12 : 40;
+      const padY = isFullscreen ? 16 : isSmall ? 12 : 32;
+      const availW = Math.max(200, rect.width - padX);
+      const availH = Math.max(120, rect.height - padY);
       const nextScale = Math.min(availW / 1920, availH / 1080);
       setScale(nextScale);
     };
@@ -243,22 +245,23 @@ export function SlideStage() {
           }
         }}
         onMouseLeave={() => setLaserPos(null)}
-        className={`no-print fixed inset-0 bg-[#18181B] text-white flex flex-col overflow-hidden ${
+        style={{ height: "100dvh" }}
+        className={`no-print fixed inset-x-0 top-0 bg-[#18181B] text-white flex flex-col overflow-hidden ${
           isLaserActive ? "cursor-none" : ""
         }`}
       >
         {/* Top Presenter Toolbar */}
-        <header className="h-14 px-5 bg-[#202024] border-b border-white/10 flex items-center justify-between gap-4 shrink-0 z-30 cursor-auto">
+        <header className="h-14 px-2.5 sm:px-5 bg-[#202024] border-b border-white/10 flex items-center justify-between gap-2 sm:gap-4 shrink-0 z-30 cursor-auto">
           {/* Left: Brand & Slide Title */}
-          <div className="flex items-center gap-3 min-w-0">
-            <span className="px-2.5 py-1 rounded-lg bg-[#8C1D40] text-white text-[12px] font-extrabold tracking-wider uppercase shrink-0">
+          <div className="flex items-center gap-3 min-w-0 flex-1 sm:flex-none">
+            <span className="hidden sm:inline-block px-2.5 py-1 rounded-lg bg-[#8C1D40] text-white text-[12px] font-extrabold tracking-wider uppercase shrink-0">
               Materna Deck
             </span>
             <span className="text-[12.5px] font-semibold text-white/60 hidden md:inline shrink-0">
               {activeMeta.section}
             </span>
             <span className="text-white/25 hidden md:inline">•</span>
-            <span className="text-[13.5px] font-medium text-white/90 truncate">
+            <span className="text-[12.5px] sm:text-[13.5px] font-medium text-white/90 truncate">
               {activeMeta.shortTitle}
             </span>
           </div>
@@ -303,7 +306,7 @@ export function SlideStage() {
               type="button"
               onClick={() => setIsLaserActive((prev) => !prev)}
               title="Toggle Presenter Laser Pointer (L)"
-              className={`inline-flex items-center gap-1.5 px-3 h-9 rounded-xl text-[12.5px] font-semibold transition-colors ${
+              className={`hidden sm:inline-flex items-center gap-1.5 px-3 h-9 rounded-xl text-[12.5px] font-semibold transition-colors ${
                 isLaserActive
                   ? "bg-[#BA0034] text-white shadow-[0_0_14px_rgba(186,0,52,0.55)]"
                   : "bg-white/10 hover:bg-white/18 text-white"
@@ -331,7 +334,7 @@ export function SlideStage() {
               type="button"
               onClick={toggleFullscreen}
               title="Toggle Fullscreen (F)"
-              className="inline-flex items-center gap-1.5 px-3 h-9 rounded-xl bg-white/10 hover:bg-white/18 text-[12.5px] font-semibold transition-colors"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 h-9 rounded-xl bg-white/10 hover:bg-white/18 text-[12.5px] font-semibold transition-colors"
             >
               {isFullscreen ? (
                 <Minimize2 className="w-4 h-4" />
@@ -347,7 +350,7 @@ export function SlideStage() {
               type="button"
               onClick={handlePrintPdf}
               title="Print / Save 16:9 Landscape PDF (P)"
-              className="inline-flex items-center gap-1.5 px-3.5 h-9 rounded-xl bg-white/10 hover:bg-white/18 text-[12.5px] font-semibold transition-colors"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3.5 h-9 rounded-xl bg-white/10 hover:bg-white/18 text-[12.5px] font-semibold transition-colors"
             >
               <Printer className="w-4 h-4" />
               <span className="hidden sm:inline">Save PDF</span>
@@ -358,9 +361,10 @@ export function SlideStage() {
               target="_blank"
               rel="noopener noreferrer"
               title="Open the live Materna MVP app (/) in a new tab"
-              className="inline-flex items-center gap-1.5 px-3.5 h-9 rounded-xl bg-[#3D7A5A] hover:bg-[#33684C] text-white text-[12.5px] font-bold shadow-sm transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 sm:px-3.5 h-9 rounded-xl bg-[#3D7A5A] hover:bg-[#33684C] text-white text-[12.5px] font-bold shadow-sm transition-colors"
             >
-              <span>Launch Live App</span>
+              <span className="hidden sm:inline">Launch Live App</span>
+              <span className="sm:hidden">Demo</span>
               <ExternalLink className="w-3.5 h-3.5" />
             </a>
           </div>
@@ -377,6 +381,22 @@ export function SlideStage() {
         {/* Centered 16:9 Scaled Stage */}
         <main
           ref={viewportRef}
+          onTouchStart={(e) => {
+            const t = e.touches[0];
+            touchStartRef.current = { x: t.clientX, y: t.clientY };
+          }}
+          onTouchEnd={(e) => {
+            const start = touchStartRef.current;
+            touchStartRef.current = null;
+            if (!start) return;
+            const t = e.changedTouches[0];
+            const dx = t.clientX - start.x;
+            const dy = t.clientY - start.y;
+            if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+              if (dx < 0) goNext();
+              else goPrev();
+            }
+          }}
           className="flex-1 flex items-center justify-center overflow-hidden relative"
         >
           <div
@@ -409,6 +429,31 @@ export function SlideStage() {
           </div>
         </main>
 
+        {/* Mobile portrait helper: rotate hint + large tap targets */}
+        <div className="hidden portrait:flex sm:portrait:hidden flex-col items-center gap-2.5 px-4 pt-2 pb-4 bg-[#202024] border-t border-white/10 shrink-0">
+          <p className="text-[12.5px] text-white/70 text-center">
+            Rotate your phone to landscape for a larger view · swipe to change slides
+          </p>
+          <div className="flex items-center gap-3 w-full max-w-sm">
+            <button
+              type="button"
+              onClick={goPrev}
+              disabled={currentIndex === 0}
+              className="flex-1 h-12 rounded-2xl bg-white/10 active:bg-white/20 disabled:opacity-35 font-semibold text-[14px] inline-flex items-center justify-center gap-1.5"
+            >
+              <ChevronLeft className="w-5 h-5" /> Prev
+            </button>
+            <button
+              type="button"
+              onClick={goNext}
+              disabled={currentIndex === TOTAL_SLIDES - 1}
+              className="flex-1 h-12 rounded-2xl bg-[#3D7A5A] active:bg-[#33684C] disabled:opacity-35 font-semibold text-[14px] inline-flex items-center justify-center gap-1.5"
+            >
+              Next <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+
         {/* Presenter Laser Pointer Dot Overlay */}
         {isLaserActive && laserPos && (
           <div
@@ -427,12 +472,12 @@ export function SlideStage() {
         {/* Slide Overview Grid Modal */}
         {isGridOpen && (
           <div className="fixed inset-0 z-50 bg-[#141417]/95 backdrop-blur-md flex flex-col cursor-auto">
-            <div className="h-16 px-8 border-b border-white/10 flex items-center justify-between shrink-0">
+            <div className="h-16 px-4 sm:px-8 border-b border-white/10 flex items-center justify-between gap-3 shrink-0">
               <div>
-                <h2 className="text-[18px] font-bold text-white">
+                <h2 className="text-[15px] sm:text-[18px] font-bold text-white">
                   Presentation Slide Overview ({TOTAL_SLIDES} Slides)
                 </h2>
-                <p className="text-[12.5px] text-white/60">
+                <p className="hidden sm:block text-[12.5px] text-white/60">
                   Select any slide to jump directly • Main Review (01–14) & Supporting Appendix (15–{TOTAL_SLIDES})
                 </p>
               </div>
@@ -447,8 +492,8 @@ export function SlideStage() {
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-8">
-              <div className="max-w-[1640px] mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-5">
+            <div className="flex-1 overflow-y-auto p-3 sm:p-8">
+              <div className="max-w-[1640px] mx-auto grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 sm:gap-5">
                 {SLIDE_METADATA.map((meta, idx) => {
                   const isCurrent = idx === currentIndex;
                   return (

@@ -231,7 +231,7 @@ export function Slide09Evidence() {
                 </div>
                 <div className="flex-1 rounded-[34px] overflow-hidden bg-[#F2F2F7]">
                   <iframe
-                    src="/"
+                    src="/app"
                     title="Live Materna Interactive MVP"
                     className="w-full h-full border-0"
                   />

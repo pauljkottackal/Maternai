@@ -5,6 +5,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Crosshair,
+  ExternalLink,
   LayoutGrid,
   Maximize2,
   Minimize2,
@@ -351,6 +352,17 @@ export function SlideStage() {
               <Printer className="w-4 h-4" />
               <span className="hidden sm:inline">Save PDF</span>
             </button>
+
+            <a
+              href="/app"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Open the live Materna MVP app (/) in a new tab"
+              className="inline-flex items-center gap-1.5 px-3.5 h-9 rounded-xl bg-[#3D7A5A] hover:bg-[#33684C] text-white text-[12.5px] font-bold shadow-sm transition-colors"
+            >
+              <span>Launch Live App</span>
+              <ExternalLink className="w-3.5 h-3.5" />
+            </a>
           </div>
         </header>
 

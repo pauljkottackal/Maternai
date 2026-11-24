@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -256,7 +256,7 @@ export function SlideStage() {
             <span className="text-[12.5px] font-semibold text-white/60 hidden md:inline shrink-0">
               {activeMeta.section}
             </span>
-            <span className="text-white/25 hidden md:inline">â€¢</span>
+            <span className="text-white/25 hidden md:inline">•</span>
             <span className="text-[13.5px] font-medium text-white/90 truncate">
               {activeMeta.shortTitle}
             </span>
@@ -269,7 +269,7 @@ export function SlideStage() {
               onClick={goPrev}
               disabled={currentIndex === 0}
               aria-label="Previous slide"
-              title="Previous Slide (â†)"
+              title="Previous Slide (←)"
               className="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/18 disabled:opacity-35 disabled:pointer-events-none flex items-center justify-center transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
@@ -289,7 +289,7 @@ export function SlideStage() {
               onClick={goNext}
               disabled={currentIndex === TOTAL_SLIDES - 1}
               aria-label="Next slide"
-              title="Next Slide (â†’ or Space)"
+              title="Next Slide (→ or Space)"
               className="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/18 disabled:opacity-35 disabled:pointer-events-none flex items-center justify-center transition-colors"
             >
               <ChevronRight className="w-4 h-4" />
@@ -421,7 +421,7 @@ export function SlideStage() {
                   Presentation Slide Overview ({TOTAL_SLIDES} Slides)
                 </h2>
                 <p className="text-[12.5px] text-white/60">
-                  Select any slide to jump directly â€¢ Main Review (01â€“14) & Supporting Appendix (15â€“{TOTAL_SLIDES})
+                  Select any slide to jump directly • Main Review (01–14) & Supporting Appendix (15–{TOTAL_SLIDES})
                 </p>
               </div>
               <button
